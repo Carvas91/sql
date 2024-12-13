@@ -107,7 +107,7 @@ Please do not pick the exact same tables that I have already diagrammed. For exa
 
 
 **MY LOGICAL DATA MODEL**
-One to may relationship
+One to may relationship  
 <img src="./images/SQL_Assignment_one_section_1.png" width="600">
 
 
