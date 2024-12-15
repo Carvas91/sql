@@ -57,7 +57,7 @@ SELECT product_id, product_name,
         WHEN product_qty_type = 'unit' THEN 'unit'
         ELSE 'bulk'
     END AS prod_qty_type_condensed
-FROM Product; 
+FROM Product;
 
 
 
@@ -65,12 +65,32 @@ FROM Product;
 add a column to the previous query called pepper_flag that outputs a 1 if the product_name 
 contains the word “pepper” (regardless of capitalization), and otherwise outputs 0. */
 
+SELECT product_id, product_name,
+    CASE 
+        WHEN product_qty_type = 'unit' THEN 'unit'
+        ELSE 'bulk'
+    END AS prod_qty_type_condensed,
+	CASE
+		WHEN lower(product_name) like '%pepper%' THEN 1
+		ELSE 0
+	END AS 'pepper flag'
+FROM Product; 
 
 
 --JOIN
 /* 1. Write a query that INNER JOINs the vendor table to the vendor_booth_assignments table on the 
 vendor_id field they both have in common, and sorts the result by vendor_name, then market_date. */
 
+SELECT *
+FROM 
+    vendor AS v
+INNER JOIN 
+    vendor_booth_assignments AS vba
+ON 
+    v.vendor_id = vba.vendor_id
+ORDER BY 
+    v.vendor_name ASC, 
+    vba.market_date ASC;
 
 
 
@@ -80,13 +100,44 @@ vendor_id field they both have in common, and sorts the result by vendor_name, t
 /* 1. Write a query that determines how many times each vendor has rented a booth 
 at the farmer’s market by counting the vendor booth assignments per vendor_id. */
 
+SELECT 
+    vendor_id, 
+    COUNT(*) AS booth_rentals
+FROM 
+    vendor_booth_assignments
+GROUP BY 
+    vendor_id;
 
 
 /* 2. The Farmer’s Market Customer Appreciation Committee wants to give a bumper 
-sticker to everyone who has ever spent more than $2000 at the market. Write a query that generates a list 
 of customers for them to give stickers to, sorted by last name, then first name. 
+sticker to everyone who has ever spent more than $2000 at the market. Write a query that generates a list 
 
 HINT: This query requires you to join two tables, use an aggregate function, and use the HAVING keyword. */
+
+
+SELECT 
+    c.customer_id,
+    c.customer_first_name,
+    c.customer_last_name,
+    SUM(cp.quantity * cp.cost_to_customer_per_qty) AS total_spent
+FROM 
+    customer AS c
+INNER JOIN 
+    customer_purchases AS cp
+ON 
+    c.customer_id = cp.customer_id
+GROUP BY 
+    c.customer_id, c.customer_first_name, c.customer_last_name
+HAVING 
+    SUM(cp.quantity * cp.cost_to_customer_per_qty) > 2000
+ORDER BY 
+    c.customer_last_name ASC, 
+    c.customer_first_name ASC;
+
+
+
+
 
 
 
