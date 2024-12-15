@@ -93,7 +93,6 @@ ORDER BY
     vba.market_date ASC;
 
 
-
 /* SECTION 3 */
 
 -- AGGREGATE
@@ -136,11 +135,6 @@ ORDER BY
     c.customer_first_name ASC;
 
 
-
-
-
-
-
 --Temp Table
 /* 1. Insert the original vendor table into a temp.new_vendor and then add a 10th vendor: 
 Thomass Superfood Store, a Fresh Focused store, owned by Thomas Rosenthal
@@ -153,6 +147,13 @@ When inserting the new vendor, you need to appropriately align the columns to be
 VALUES(col1,col2,col3,col4,col5) 
 */
 
+CREATE TABLE temp.new_vendor AS
+SELECT *
+FROM vendor;
+
+
+INSERT INTO temp.new_vendor (vendor_id, vendor_name, vendor_type, vendor_owner_first_name, vendor_owner_last_name) 
+VALUES (10, 'Thomass Superfood Store', 'Fresh Focused', 'Thomas', ' Rosenthal');
 
 
 -- Date
@@ -162,6 +163,14 @@ HINT: you might need to search for strfrtime modifers sqlite on the web to know 
 and year are! */
 
 
+SELECT 
+    customer_id,
+    strftime('%m', market_date) AS month,
+    strftime('%Y', market_date) AS year
+FROM 
+    customer_purchases;
+
+
 
 /* 2. Using the previous query as a base, determine how much money each customer spent in April 2022. 
 Remember that money spent is quantity*cost_to_customer_per_qty. 
@@ -169,3 +178,15 @@ Remember that money spent is quantity*cost_to_customer_per_qty.
 HINTS: you will need to AGGREGATE, GROUP BY, and filter...
 but remember, STRFTIME returns a STRING for your WHERE statement!! */
 
+SELECT 
+    customer_id,
+    SUM(quantity * cost_to_customer_per_qty) AS total_spent
+FROM 
+    customer_purchases
+WHERE 
+    strftime('%m', market_date) = '04' --April
+    AND strftime('%Y', market_date) = '2022' --year 2022
+GROUP BY 
+    customer_id
+ORDER by 
+	total_spent DESC;
