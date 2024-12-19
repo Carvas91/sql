@@ -164,12 +164,136 @@ WHERE
 /* 1. Using a UNION, write a query that displays the market dates with the highest and lowest total sales.
 
 HINT: There are a possibly a few ways to do this query, but if you're struggling, try the following: 
-1) Create a CTE/Temp Table to find sales values grouped dates; 
-2) Create another CTE/Temp table with a rank windowed function on the previous query to create 
-"best day" and "worst day"; 
-3) Query the second temp table twice, once for the best day, once for the worst day, 
+1) Create a CTE/Temp Table to find sales values grouped dates; */
+--total sales by market_date
+SELECT 
+    market_date,
+    SUM(quantity * cost_to_customer_per_qty) AS total_sales
+FROM 
+    customer_purchases
+GROUP BY 
+    market_date;
+
+/*2) Create another CTE/Temp table with a rank windowed function on the previous query to create 
+"best day" and "worst day"; */
+
+--Ranking the dates
+WITH SalesByDate AS (
+    SELECT 
+        market_date,
+        SUM(quantity * cost_to_customer_per_qty) AS total_sales
+    FROM 
+        customer_purchases
+    GROUP BY 
+        market_date
+)
+SELECT 
+    market_date,
+    total_sales,
+    RANK() OVER (ORDER BY total_sales DESC) AS best_day_rank,
+    RANK() OVER (ORDER BY total_sales ASC) AS worst_day_rank
+FROM 
+    SalesByDate;
+
+
+/*3) Query the second temp table twice, once for the best day, once for the worst day, 
 with a UNION binding them. */
 
+
+--FIlering the best as worst day
+WITH SalesByDate AS (
+    SELECT 
+        market_date,
+        SUM(quantity * cost_to_customer_per_qty) AS total_sales
+    FROM 
+        customer_purchases
+    GROUP BY 
+        market_date
+),
+RankedSales AS (
+    SELECT 
+        market_date,
+        total_sales,
+        RANK() OVER (ORDER BY total_sales DESC) AS best_day_rank,
+        RANK() OVER (ORDER BY total_sales ASC) AS worst_day_rank
+    FROM 
+        SalesByDate
+)
+SELECT 
+    market_date,
+    total_sales,
+    'Best Day' AS type
+FROM 
+    RankedSales
+WHERE 
+    best_day_rank = 1;
+
+-- And for Worst Day
+WITH SalesByDate AS (
+    SELECT 
+        market_date,
+        SUM(quantity * cost_to_customer_per_qty) AS total_sales
+    FROM 
+        customer_purchases
+    GROUP BY 
+        market_date
+),
+RankedSales AS (
+    SELECT 
+        market_date,
+        total_sales,
+        RANK() OVER (ORDER BY total_sales DESC) AS best_day_rank,
+        RANK() OVER (ORDER BY total_sales ASC) AS worst_day_rank
+    FROM 
+        SalesByDate)
+
+SELECT 
+    market_date,
+    total_sales,
+    'Worst Day' AS type
+FROM 
+    RankedSales
+WHERE 
+    worst_day_rank = 1;
+	
+--UNION
+WITH SalesByDate AS (
+    SELECT 
+        market_date,
+        SUM(quantity * cost_to_customer_per_qty) AS total_sales
+    FROM 
+        customer_purchases
+    GROUP BY 
+        market_date
+),
+RankedSales AS (
+    SELECT 
+        market_date,
+        total_sales,
+        RANK() OVER (ORDER BY total_sales DESC) AS best_day_rank,
+        RANK() OVER (ORDER BY total_sales ASC) AS worst_day_rank
+    FROM 
+        SalesByDate
+)
+SELECT 
+    market_date,
+    total_sales,
+    'Best Day' AS type
+FROM 
+    RankedSales
+WHERE 
+    best_day_rank = 1
+
+UNION
+
+SELECT 
+    market_date,
+    total_sales,
+    'Worst Day' AS type
+FROM 
+    RankedSales
+WHERE 
+    worst_day_rank = 1;
 
 
 
