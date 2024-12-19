@@ -1,6 +1,8 @@
 /* ASSIGNMENT 2 */
 /* SECTION 2 */
 
+/*Carlos Vasconez*/
+
 -- COALESCE
 /* 1. Our favourite manager wants a detailed long list of products, but is afraid of tables! 
 We tell them, no problem! We can produce a list with all of the appropriate details. 
@@ -20,6 +22,23 @@ The `||` values concatenate the columns into strings.
 Edit the appropriate columns -- you're making two edits -- and the NULL rows will be fixed. 
 All the other rows will remain the same.) */
 
+SELECT 
+product_name || ', ' || product_size|| ' (' || product_qty_type || ')'
+FROM product;
+
+--First I want to find NULL VALUES
+SELECT *
+FROM product
+WHERE product_name IS NULL 
+   OR product_size IS NULL 
+   OR product_qty_type IS NULL;
+   
+
+SELECT 
+product_name || ', ' || 
+COALESCE(product_size, '') || 
+' (' || COALESCE(product_qty_type, 'unit') || ')' 
+FROM product;
 
 
 --Windowed Functions
