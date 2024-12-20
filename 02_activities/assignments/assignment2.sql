@@ -310,6 +310,43 @@ Think a bit about the row counts: how many distinct vendors, product names are t
 How many customers are there (y). 
 Before your final group by you should have the product of those two queries (x*y).  */
 
+WITH VendorProduct AS ( --CTE with joins from vendor, product and vendor inventory
+    SELECT DISTINCT
+        v.vendor_name,
+        p.product_name,
+        vi.original_price
+    FROM 
+        vendor_inventory vi
+    JOIN 
+        product p ON vi.product_id = p.product_id
+    JOIN 
+        vendor v ON vi.vendor_id = v.vendor_id
+),
+-- croos join to pair every vendor-product with every customer
+CrossJoin AS (
+    SELECT 
+        vp.vendor_name,
+        vp.product_name,
+        vp.original_price,
+        c.customer_id
+    FROM 
+        VendorProduct vp
+    CROSS JOIN 
+        customer c
+)
+--calculating the total revenue
+SELECT 
+    vendor_name,
+    product_name,
+    SUM(5 * original_price) AS total_revenue
+FROM 
+    CrossJoin
+GROUP BY 
+    vendor_name, 
+    product_name
+ORDER BY 
+    vendor_name, 
+    product_name;
 
 
 -- INSERT
@@ -318,11 +355,21 @@ This table will contain only products where the `product_qty_type = 'unit'`.
 It should use all of the columns from the product table, as well as a new column for the `CURRENT_TIMESTAMP`.  
 Name the timestamp column `snapshot_timestamp`. */
 
+CREATE TABLE product_units AS
+SELECT 
+    *,
+    CURRENT_TIMESTAMP AS snapshot_timestamp
+FROM 
+    product
+WHERE 
+    product_qty_type = 'unit';
 
 
 /*2. Using `INSERT`, add a new row to the product_units table (with an updated timestamp). 
 This can be any product you desire (e.g. add another record for Apple Pie). */
 
+INSERT INTO product_units (product_id, product_name, product_qty_type, snapshot_timestamp)
+VALUES (999, 'Pineapple Pie', 'unit', CURRENT_TIMESTAMP);
 
 
 -- DELETE
@@ -330,7 +377,8 @@ This can be any product you desire (e.g. add another record for Apple Pie). */
 
 HINT: If you don't specify a WHERE clause, you are going to have a bad time.*/
 
-
+DELETE FROM product_units
+WHERE product_name = 'Pineapple Pie'
 
 -- UPDATE
 /* 1.We want to add the current_quantity to the product_units table. 
@@ -348,6 +396,45 @@ Third, SET current_quantity = (...your select statement...), remembering that WH
 Finally, make sure you have a WHERE statement to update the right row, 
 	you'll need to use product_units.product_id to refer to the correct row within the product_units table. 
 When you have all of these components, you can run the update statement. */
+
+ALTER TABLE product_units
+ADD current_quantity INT; --new column with  NULL values
+
+--Last qty per product
+SELECT 
+    vi.product_id,
+    COALESCE(vi.quantity, 0) AS last_quantity
+FROM 
+    vendor_inventory vi
+WHERE 
+    vi.market_date = (
+        SELECT MAX(market_date) 
+        FROM vendor_inventory 
+        WHERE vendor_inventory.product_id = vi.product_id
+    );
+
+--updating the newly created COLUMN
+UPDATE product_units
+SET current_quantity = (
+    SELECT 
+        COALESCE(vi.quantity, 0) AS last_quantity
+    FROM 
+        vendor_inventory vi
+    WHERE 
+        vi.product_id = product_units.product_id
+          AND vi.market_date = (
+              SELECT MAX(market_date) 
+              FROM vendor_inventory 
+              WHERE vendor_inventory.product_id = vi.product_id
+          )
+)
+WHERE EXISTS (
+    SELECT 1 
+    FROM vendor_inventory vi
+    WHERE vi.product_id = product_units.product_id
+);
+
+
 
 
 
