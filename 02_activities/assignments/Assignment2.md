@@ -58,7 +58,9 @@ We want to create employee shifts, splitting up the day into morning and evening
 #### Prompt 3
 The store wants to keep customer addresses. Propose two architectures for the CUSTOMER_ADDRESS table, one that will retain changes, and another that will overwrite. Which is type 1, which is type 2? 
 
-**HINT:** search type 1 vs type 2 slowly changing dimensions. 
+**HINT:** search type 1 vs type 2 slowly changing dimensions.   
+**Type one model**
+ <img src="./images/SQL_assignment2-prompt3_type1.png" width="600"> 
 
 ```
 Your answer...
