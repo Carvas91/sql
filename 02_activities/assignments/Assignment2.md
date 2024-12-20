@@ -45,8 +45,13 @@ There are several tools online you can use, I'd recommend [Draw.io](https://www.
 
 **HINT:** You do not need to create any data for this prompt. This is a conceptual model only. 
 
+<<<<<<< HEAD
 **My logical model for prompt 1**   
 <img src="./images/SQL_assignment2-prompt1.png" width="600"> 
+=======
+**My logical model for prompt 1**  
+![prompt one ERD]("02_activities/assignments/images/SQL_assignment2-prompt1.png")
+>>>>>>> 9bb5ef8ff2deb42e55baae199c543d84a949ef45
 
 #### Prompt 2
 We want to create employee shifts, splitting up the day into morning and evening. Add this to the ERD.
