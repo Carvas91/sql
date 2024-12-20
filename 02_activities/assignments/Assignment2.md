@@ -63,13 +63,13 @@ The store wants to keep customer addresses. Propose two architectures for the CU
 <img src="./images/SQL_assignment2-prompt3_type1.png" width="600">      
 
 **Type one**  
-We use this architecture if we don't need to keep a record of the addresses. When a change occurt, the row will be updated and the old data will be lost. We can do this by using UPDATE sql statements.
+We use this architecture if we don't need to keep a record of the addresses. When a change occurs, the row will be updated and the old data will be lost. We can do this by using UPDATE sql statements.
 
 **Type two model**  
 <img src="./images/SQL_assignment2-prompt3_type2.png" width="600">  
 
 **Type two**  
-If maintaining a record is important to our company, for analysis purposes, then we should use the type two architecture. The table would include start and end dates and maybe a boolean column that confirms if that address is the current one.
+If maintaining a record is important to our company -for analysis purposes, then we should use the type two architecture. The table would include start and end dates and maybe a boolean column that confirms if that address is the current one.
 
 ***
 
