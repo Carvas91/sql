@@ -134,7 +134,7 @@ FROM
     product;
 
 	
---Witn NULL values if no hyphens were found	
+--With NULL values if no hyphens were found	
 SELECT 
     product_name,
     CASE 
@@ -322,7 +322,7 @@ WITH VendorProduct AS ( --CTE with joins from vendor, product and vendor invento
     JOIN 
         vendor v ON vi.vendor_id = v.vendor_id
 ),
--- croos join to pair every vendor-product with every customer
+-- Cross join to pair every vendor-product with every customer
 CrossJoin AS (
     SELECT 
         vp.vendor_name,
@@ -334,7 +334,7 @@ CrossJoin AS (
     CROSS JOIN 
         customer c
 )
---calculating the total revenue
+--Calculating the total revenue
 SELECT 
     vendor_name,
     product_name,
@@ -413,7 +413,7 @@ WHERE
         WHERE vendor_inventory.product_id = vi.product_id
     );
 
---updating the newly created COLUMN
+--Updating the newly created COLUMN
 UPDATE product_units
 SET current_quantity = (
     SELECT 
@@ -433,9 +433,3 @@ WHERE EXISTS (
     FROM vendor_inventory vi
     WHERE vi.product_id = product_units.product_id
 );
-
-
-
-
-
-
