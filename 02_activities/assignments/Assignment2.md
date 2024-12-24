@@ -45,17 +45,35 @@ There are several tools online you can use, I'd recommend [Draw.io](https://www.
 
 **HINT:** You do not need to create any data for this prompt. This is a conceptual model only. 
 
+**My logical model for prompt 1**   
+<img src="./images/SQL_assignment2-prompt1.png" width="600"> 
+
 #### Prompt 2
 We want to create employee shifts, splitting up the day into morning and evening. Add this to the ERD.
+  
+  **My logical model for prompt 2**   
+  <img src="./images/SQL_assignment2-prompt2.png" width="600"> 
+
 
 #### Prompt 3
 The store wants to keep customer addresses. Propose two architectures for the CUSTOMER_ADDRESS table, one that will retain changes, and another that will overwrite. Which is type 1, which is type 2? 
 
-**HINT:** search type 1 vs type 2 slowly changing dimensions. 
+**HINT:** search type 1 vs type 2 slowly changing dimensions.   
+**Type one model**  
+<img src="./images/SQL_assignment2-prompt3_type1.png" width="600">      
 
-```
-Your answer...
-```
+**Type one**  
+We use this architecture when we don't need to keep a record of previous addresses. When a change occurs, the existing row is updated, and the old data is overwritten and lost. This is implemented using UPDATE SQL statements.
+
+**Type two model**  
+<img src="./images/SQL_assignment2-prompt3_type2.png" width="600">  
+
+**Type two**  
+If maintaining a history of changes is important for our company—for example, for analysis or compliance purposes—we should use the Type Two architecture. In this model:
+
+- The table includes start and end dates to indicate the period of validity for each record.
+- Optionally, it may include a boolean column to indicate if an address is the current one.
+This approach allows us to preserve historical data and analyze how records have changed over time.
 
 ***
 
